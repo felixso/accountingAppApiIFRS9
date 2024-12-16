@@ -43,7 +43,9 @@ texts = text_splitter.split_documents(documents)
 vectorstore = Chroma.from_documents(documents=texts, embedding=HuggingFaceEmbeddings())
 
 # Groq LLM initialisieren
-llm = Groq(model_name="llama2-70b-4096")
+#llm = Groq(model_name="llama2-70b-4096")
+llm = ChatGroq(model_name="llama2-70b-4096")
+
 
 # Konversationsgedächtnis erstellen
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
