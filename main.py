@@ -4,16 +4,10 @@ sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 import streamlit as st
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
-#from langchain_community.embeddings import HuggingFaceEmbeddings
-#from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_huggingface import HuggingFaceEmbeddings
-#from langchain.vectorstores import Chroma
-#from langchain_community.vectorstores import Chroma
 from langchain_chroma import Chroma
-
-#from langchain.llms import Groq
-#from langchain.document_loaders import DirectoryLoader
 from langchain_community.document_loaders import DirectoryLoader
+from langchain_community.document_loaders import UnstructuredFileLoader
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_groq import ChatGroq
@@ -36,31 +30,48 @@ loader = DirectoryLoader(
 
 documents = loader.load()
 print(f"Anzahl der geladenen Dokumente: {len(documents)}")
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+text_splitter = CharacterTextSplitter(chunk_size=2000, chunk_overlap=0)
 texts = text_splitter.split_documents(documents)
 
 # Embeddings erstellen und Vektorstore initialisieren
 embeddings = HuggingFaceEmbeddings()
 #embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 #vectorstore = Chroma.from_documents(texts, embeddings)
-vectorstore = Chroma.from_documents(documents=texts, embedding=HuggingFaceEmbeddings())
+#vectorstore = Chroma.from_documents(documents=texts, embedding=HuggingFaceEmbeddings())
+vectorstore = Chroma.from_documents(documents=texts, embeddings,persist_directory="vector_db_dir")
 
 # Groq LLM initialisieren
 #llm = Groq(model_name="llama2-70b-4096")
-llm = ChatGroq(model_name="llama2-70b-4096")
+#llm = ChatGroq(model_name="llama2-70b-4096")
+llm = ChatGroq(model="llama-3.1-70b-versatile",temperature=0)
 
 
 # Konversationsgedächtnis erstellen
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+#memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+memory = ConversationBufferMemory(
+    llm=llm,
+    output_key="answer",
+    memory_key="chat_history",
+    return_messages=True
+)
+
 
 # RAG-Chain erstellen
 qa = ConversationalRetrievalChain.from_llm(
     llm=llm,
     retriever=vectorstore.as_retriever(),
-    memory=memory
+    chain_type = "stuff",
+    memory=memory,
+    verbose = True
+    return_source_documents=True
 )
 
 # Streamlit UI
+
+st.set_page_config(
+    page_title="Chatbot",
+    layout="centered"
+)
 st.title("RAG Chatbot mit Groq und LangChain")
 
 if "messages" not in st.session_state:
