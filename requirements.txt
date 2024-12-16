@@ -1,0 +1,14 @@
+groq
+streamlit
+langchain
+langchain-community
+langchain-openai
+langchain-groq
+chromadb
+tiktoken
+openai
+unstructured
+unstructured[pdf]
+python-dotenv
+sentence-transformers
+pysqlite3-binary
