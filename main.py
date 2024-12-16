@@ -38,7 +38,13 @@ embeddings = HuggingFaceEmbeddings()
 #embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
 #vectorstore = Chroma.from_documents(texts, embeddings)
 #vectorstore = Chroma.from_documents(documents=texts, embedding=HuggingFaceEmbeddings())
-vectorstore = Chroma.from_documents(documents=texts, embeddings,persist_directory="vector_db_dir")
+#vectorstore = Chroma.from_documents(documents=texts, embeddings,persist_directory="vector_db_dir")
+vectorstore = Chroma.from_documents(
+    documents=texts,
+    embedding=embeddings,
+    persist_directory="vector_db_dir"
+)
+
 
 # Groq LLM initialisieren
 #llm = Groq(model_name="llama2-70b-4096")
