@@ -68,7 +68,7 @@ qa = ConversationalRetrievalChain.from_llm(
     retriever=vectorstore.as_retriever(),
     chain_type = "stuff",
     memory=memory,
-    verbose = True
+    verbose = True,
     return_source_documents=True
 )
 
