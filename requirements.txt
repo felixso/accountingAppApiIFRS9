@@ -1,15 +1,13 @@
-groq
 streamlit
 langchain
 langchain-community
-langchain-openai
 langchain-groq
 langchain-chroma
-chromadb
+langchain-huggingface
 tiktoken
-openai
 unstructured
 unstructured[pdf]
 python-dotenv
 sentence-transformers
 pysqlite3-binary
+nltk
